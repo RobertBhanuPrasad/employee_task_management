@@ -18,7 +18,7 @@ const defaultRoutes = [
         route: authRoutes_1.default,
     },
     {
-        path: '/users',
+        path: '/employees',
         route: userRoutes_1.default,
     },
     {
