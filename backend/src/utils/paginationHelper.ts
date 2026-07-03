@@ -1,8 +1,8 @@
 export interface PaginationOptions {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  page: number;
+  limit: number;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
 }
 
 export const getPaginationOptions = (query: any): PaginationOptions => {
