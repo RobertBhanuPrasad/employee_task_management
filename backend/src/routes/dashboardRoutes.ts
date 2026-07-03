@@ -1,9 +1,25 @@
 import { Router } from 'express';
+import dashboardController from '../controllers/dashboardController';
+import { authenticate } from '../middlewares/authMiddleware';
+import { authorizeRole } from '../middlewares/roleMiddleware';
 
 const router = Router();
 
-// Placeholders for dashboard routes
-// router.get('/admin', dashboardController.getAdminDashboard);
-// router.get('/employee', dashboardController.getEmployeeDashboard);
+// Ensure all dashboard routes are authenticated
+router.use(authenticate);
+
+// Admin dashboard route - strictly for ADMIN
+router.get(
+  '/admin', 
+  authorizeRole('ADMIN'), 
+  dashboardController.getAdminDashboard
+);
+
+// Employee dashboard route - strictly for EMPLOYEE
+router.get(
+  '/employee', 
+  authorizeRole('EMPLOYEE'), 
+  dashboardController.getEmployeeDashboard
+);
 
 export default router;
