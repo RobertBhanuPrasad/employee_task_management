@@ -1,20 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
 import ApiError from '../utils/ApiError';
 import asyncHandler from '../utils/asyncHandler';
+import { verifyToken, JwtPayload } from '../utils/jwt';
 
 // Extend Express Request type to include user information
 declare global {
   namespace Express {
     interface Request {
-      user?: any; // Replace 'any' with specific User interface later
+      user?: JwtPayload;
     }
   }
 }
 
 export const authenticate = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  // Authentication logic will be implemented here
-  // Check for JWT token in headers or cookies
-  // Verify token
-  // Attach user to req.user
-  next();
+  let token: string | undefined;
+
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(new ApiError(401, 'Not authorized to access this route. Missing Token.'));
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return next(new ApiError(401, 'Not authorized to access this route. Invalid or Expired Token.'));
+  }
 });
