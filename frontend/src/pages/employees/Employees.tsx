@@ -1,7 +1,8 @@
 import React from 'react';
+import EmployeeList from './EmployeeList';
 
-const Employees = () => {
-  return <div>Employees Page (Placeholder)</div>;
+const Employees: React.FC = () => {
+  return <EmployeeList />;
 };
 
 export default Employees;
