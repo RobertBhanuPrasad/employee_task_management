@@ -1,7 +1,8 @@
 import React from 'react';
+import NotificationsList from './NotificationsList';
 
-const Notifications = () => {
-  return <div>Notifications Page (Placeholder)</div>;
+const Notifications: React.FC = () => {
+  return <NotificationsList />;
 };
 
 export default Notifications;

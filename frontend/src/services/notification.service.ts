@@ -22,9 +22,22 @@ export interface PaginatedNotifications {
 }
 
 class NotificationService {
-  async getNotifications(page = 1, limit = 5): Promise<PaginatedNotifications> {
+  async getNotifications(page = 1, limit = 10): Promise<PaginatedNotifications> {
     const response = await api.get(`/v1/notifications?page=${page}&limit=${limit}`);
     return response.data.data;
+  }
+
+  async getUnreadCount(): Promise<number> {
+    const response = await api.get('/v1/notifications/unread-count');
+    return response.data.data.unreadCount;
+  }
+
+  async markRead(id: number): Promise<void> {
+    await api.patch(`/v1/notifications/${id}/read`);
+  }
+
+  async markAllRead(): Promise<void> {
+    await api.patch('/v1/notifications/read-all');
   }
 }
 
