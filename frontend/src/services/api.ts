@@ -24,7 +24,12 @@ api.interceptors.response.use(
       if (status === 401) {
         removeToken();
         localStorage.clear();
-        window.location.href = '/login';
+        
+        import('../store').then(({ store }) => {
+          import('../store/features/authSlice').then(({ logout }) => {
+            store.dispatch(logout());
+          });
+        });
       } else if (status === 403) {
         console.error('Access Forbidden (403)');
       } else if (status === 500) {

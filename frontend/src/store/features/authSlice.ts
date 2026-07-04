@@ -10,13 +10,21 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, { dispat
     console.error('Logout API failed', error);
   } finally {
     dispatch(logout());
-    window.location.href = '/login';
   }
 });
 
+interface User {
+  id: number;
+  full_name: string;
+  email: string;
+  role: 'ADMIN' | 'EMPLOYEE';
+  department: string;
+  designation: string;
+}
+
 interface AuthState {
   token: string | null;
-  user: any | null;
+  user: User | null;
   rememberMe: boolean;
   isAuthenticated: boolean;
 }
