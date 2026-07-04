@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken, removeToken } from '../utils/tokenHelper';
+import { getToken, clearAuthStorage } from '../utils/tokenHelper';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
@@ -22,8 +22,7 @@ api.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       if (status === 401) {
-        removeToken();
-        localStorage.clear();
+        clearAuthStorage();
         
         import('../store').then(({ store }) => {
           import('../store/features/authSlice').then(({ logout }) => {
