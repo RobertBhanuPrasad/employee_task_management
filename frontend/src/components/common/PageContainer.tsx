@@ -6,23 +6,22 @@ interface PageContainerProps {
   title: string;
   children: React.ReactNode;
   actions?: React.ReactNode;
+  disablePaper?: boolean;
 }
 
-const PageContainer: React.FC<PageContainerProps> = ({ title, children, actions }) => {
+const PageContainer: React.FC<PageContainerProps> = ({ title, children, actions, disablePaper = false }) => {
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
+    <Container maxWidth={false} sx={{ py: { xs: 2, md: 3 }, px: { xs: 2, md: 3 } }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', mb: 1 }}>
         <Breadcrumb />
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
-          <Typography variant="h4" component="h1" color="text.primary">
-            {title}
-          </Typography>
-          {actions && <Box>{actions}</Box>}
-        </Box>
       </Box>
-      <Paper sx={{ p: 3, borderRadius: 2, minHeight: 'calc(100vh - 220px)' }}>
-        {children}
-      </Paper>
+      {disablePaper ? (
+        <Box sx={{ minHeight: 'calc(100vh - 220px)' }}>{children}</Box>
+      ) : (
+        <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: 2, minHeight: 'calc(100vh - 220px)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+          {children}
+        </Paper>
+      )}
     </Container>
   );
 };

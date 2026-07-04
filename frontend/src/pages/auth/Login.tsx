@@ -80,95 +80,125 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Card sx={{ width: '100%', p: 2, boxShadow: 3 }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-            {/* Logo Placeholder */}
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        p: 2,
+      }}
+    >
+      <Card
+        sx={{
+          width: '100%',
+          maxWidth: 440,
+          p: { xs: 2, sm: 4 },
+          boxShadow: '0 12px 40px rgba(31, 38, 135, 0.1)',
+          borderRadius: 4,
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.5)',
+        }}
+      >
+        <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
             <Box
               sx={{
-                width: 60,
-                height: 60,
+                width: 72,
+                height: 72,
                 bgcolor: 'primary.main',
-                borderRadius: '50%',
+                borderRadius: '24%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontWeight: 'bold',
+                fontWeight: 800,
+                fontSize: 24,
                 mb: 2,
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
               }}
             >
-              LOGO
+              ETM
             </Box>
-            <Typography variant="h5" fontWeight="bold">Welcome Back</Typography>
-            <Typography variant="body2" color="text.secondary">
-              Sign in to continue to Employee Task Management
+            <Typography variant="h4" fontWeight="800" color="text.primary" gutterBottom>
+              Welcome Back
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Sign in to Employee Task Management
             </Typography>
           </Box>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Email Address"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
-                />
-              )}
-            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Email Address"
+                    variant="outlined"
+                    fullWidth
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
 
-            <Controller
-              name="password"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  error={!!errors.password}
-                  helperText={errors.password?.message}
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }
-                  }}
-                />
-              )}
-            />
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    variant="outlined"
+                    fullWidth
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }
+                    }}
+                  />
+                )}
+              />
+            </Box>
 
-            <Box display="flex" justifyContent="space-between" alignItems="center" mt={1} mb={2}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 3 }}>
               <Controller
                 name="rememberMe"
                 control={control}
                 render={({ field }) => (
                   <FormControlLabel
                     control={<Checkbox {...field} checked={field.value} color="primary" />}
-                    label={<Typography variant="body2">Remember me</Typography>}
+                    label={<Typography variant="body2" fontWeight={500}>Remember me</Typography>}
+                    sx={{ m: 0 }}
                   />
                 )}
               />
-              <Typography variant="body2" color="text.secondary">
-                Forgot Password (Coming Soon)
-              </Typography>
+              <Link
+                component="button"
+                variant="body2"
+                onClick={(e) => { e.preventDefault(); }}
+                underline="hover"
+                fontWeight={500}
+                sx={{ ml: 'auto' }}
+              >
+                Forgot Password?
+              </Link>
             </Box>
 
             <Button
@@ -179,19 +209,21 @@ const Login = () => {
               size="large"
               disabled={loading}
               startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+              sx={{ py: 1.5, borderRadius: 2, fontWeight: 600, fontSize: '1rem', textTransform: 'none' }}
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography variant="body2">
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
               Don't have an account?{' '}
               <Link
-                sx={{ cursor: 'pointer' }}
+                component="button"
                 variant="body2"
                 onClick={() => navigate('/register')}
                 underline="hover"
+                fontWeight={600}
               >
                 Register here
               </Link>
@@ -206,11 +238,11 @@ const Login = () => {
         onClose={() => setErrorMsg('')}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%', borderRadius: 2 }}>
           {errorMsg}
         </Alert>
       </Snackbar>
-    </Container>
+    </Box>
   );
 };
 

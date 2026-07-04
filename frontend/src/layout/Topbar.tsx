@@ -120,6 +120,10 @@ const Topbar: React.FC<TopbarProps> = ({ handleDrawerToggle, desktopOpen }) => {
         width: { md: `calc(100% - ${drawerWidth}px)` },
         ml: { md: `${drawerWidth}px` },
         transition: 'width 0.3s ease, margin 0.3s ease',
+        boxShadow: 'none',
+        borderBottom: '1px solid rgba(0,0,0,0.05)',
+        backgroundColor: 'background.paper',
+        color: 'text.primary',
       }}
     >
       <Toolbar>

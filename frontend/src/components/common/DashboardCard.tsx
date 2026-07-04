@@ -18,7 +18,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   loading = false 
 }) => {
   return (
-    <Card elevation={1} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card elevation={0} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
       <CardContent sx={{ flexGrow: 1, p: 3 }}>
         {loading ? (
           <>

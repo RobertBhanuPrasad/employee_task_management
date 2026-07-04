@@ -157,9 +157,9 @@ const EmployeeList: React.FC = () => {
   ];
 
   return (
-    <PageContainer title="Employee Management">
+    <PageContainer title="Employee Management" disablePaper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h4" fontWeight={700} color="text.primary">
+        <Typography variant="h4" fontWeight={800} color="text.primary">
           Employees
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -175,7 +175,7 @@ const EmployeeList: React.FC = () => {
       </Box>
 
       {error ? (
-        <Paper elevation={1} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Paper elevation={0} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
           <Alert severity="error" sx={{ mb: 3, width: '100%', maxWidth: 600 }}>
             {error === 'Forbidden' || error.includes('403') || error.includes('Permission') 
               ? 'Permission Denied: You do not have access to view this data.'
@@ -186,20 +186,22 @@ const EmployeeList: React.FC = () => {
           </Button>
         </Paper>
       ) : (
-        <Paper elevation={1} sx={{ p: 0, overflow: 'hidden' }}>
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end', borderBottom: 1, borderColor: 'divider' }}>
+        <Paper elevation={0} sx={{ p: 0, overflow: 'hidden', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)', width: '100%' }}>
+          <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-start', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
             <TextField
               placeholder="Search by Name, Email, Department..."
               variant="outlined"
               size="small"
               onChange={handleSearchChange}
-              sx={{ width: { xs: '100%', sm: 350 } }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
+              sx={{ width: { xs: '100%', sm: 400 }, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }
               }}
             />
           </Box>
@@ -223,9 +225,22 @@ const EmployeeList: React.FC = () => {
               }}
               sx={{
                 border: 0,
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: 'background.default',
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
+                '& .MuiDataGrid-cell': {
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
                 '& .MuiDataGrid-cell:focus': {
                   outline: 'none',
                 },
+                '& .MuiDataGrid-row:hover': {
+                  backgroundColor: 'action.hover',
+                },
+                '& .MuiDataGrid-footerContainer': {
+                  borderTop: '1px solid rgba(0,0,0,0.05)',
+                }
               }}
             />
           </Box>

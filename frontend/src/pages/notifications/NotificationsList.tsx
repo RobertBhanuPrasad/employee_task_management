@@ -25,12 +25,15 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 
 import NotificationDetailsDrawer from './NotificationDetailsDrawer';
 
 const CustomNoRowsOverlay = () => (
-  <GridOverlay>
-    <Typography color="text.secondary">No notifications available</Typography>
+  <GridOverlay sx={{ flexDirection: 'column', gap: 1 }}>
+    <NotificationsOffIcon sx={{ fontSize: 64, color: 'text.disabled' }} />
+    <Typography variant="h6" color="text.secondary" fontWeight={600}>No Notifications</Typography>
+    <Typography variant="body2" color="text.secondary">You're all caught up!</Typography>
   </GridOverlay>
 );
 
@@ -130,6 +133,7 @@ const NotificationsList: React.FC = () => {
           label={params.value.replace('_', ' ')} 
           color={getTypeColor(params.value)} 
           size="small" 
+          sx={{ fontWeight: 600, borderRadius: 2 }}
         />
       )
     },
@@ -143,6 +147,7 @@ const NotificationsList: React.FC = () => {
           color={params.value ? 'default' : 'error'} 
           size="small" 
           variant={params.value ? 'outlined' : 'filled'}
+          sx={{ fontWeight: 600, borderRadius: 2 }}
         />
       )
     },
@@ -181,9 +186,9 @@ const NotificationsList: React.FC = () => {
   };
 
   return (
-    <PageContainer title="Notifications">
+    <PageContainer title="Notifications" disablePaper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h4" fontWeight={700} color="text.primary">
+        <Typography variant="h4" fontWeight={800} color="text.primary">
           Notifications
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -197,7 +202,7 @@ const NotificationsList: React.FC = () => {
       </Box>
 
       {error ? (
-        <Paper elevation={1} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Paper elevation={0} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
           <Alert severity="error" sx={{ mb: 3, width: '100%', maxWidth: 600 }}>
             {error}
           </Alert>
@@ -206,15 +211,15 @@ const NotificationsList: React.FC = () => {
           </Button>
         </Paper>
       ) : (
-        <Paper elevation={1} sx={{ p: 0, overflow: 'hidden' }}>
-          <Box sx={{ p: 2, display: 'flex', gap: 2, flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider' }}>
+        <Paper elevation={0} sx={{ p: 0, overflow: 'hidden', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+          <Box sx={{ p: 2, display: 'flex', gap: 2, flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
             <TextField
               select
               label="Filter By"
               size="small"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             >
               <MenuItem value="ALL">All Notifications</MenuItem>
               <MenuItem value="READ">Read</MenuItem>
@@ -243,9 +248,22 @@ const NotificationsList: React.FC = () => {
               }}
               sx={{
                 border: 0,
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: 'background.default',
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
+                '& .MuiDataGrid-cell': {
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
                 '& .MuiDataGrid-cell:focus': {
                   outline: 'none',
                 },
+                '& .MuiDataGrid-row:hover': {
+                  backgroundColor: 'action.hover',
+                },
+                '& .MuiDataGrid-footerContainer': {
+                  borderTop: '1px solid rgba(0,0,0,0.05)',
+                }
               }}
             />
           </Box>

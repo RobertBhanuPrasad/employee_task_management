@@ -116,9 +116,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                     sx={{ 
                       opacity: desktopOpen ? 1 : 0, 
                       display: desktopOpen ? 'block' : 'none',
-                      whiteSpace: 'nowrap'
+                      whiteSpace: 'nowrap',
+                      '& .MuiListItemText-primary': { fontWeight: isSelected ? 600 : 400 }
                     }} 
-                    primaryTypographyProps={{ fontWeight: isSelected ? 600 : 400 }}
                   />
                 </ListItemButton>
               </Tooltip>
@@ -153,7 +153,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             boxSizing: 'border-box', 
             width: drawerWidth, 
             transition: 'width 0.3s ease',
-            overflowX: 'hidden' 
+            overflowX: 'hidden',
+            borderRight: 'none',
+            boxShadow: '1px 0 10px rgba(0,0,0,0.05)',
           },
         }}
         open

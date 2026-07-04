@@ -237,7 +237,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     label="Start Date"
                     type="date"
                     fullWidth
-                    InputLabelProps={{ shrink: true }}
+                    slotProps={{ inputLabel: { shrink: true } }}
                     error={!!errors.start_date}
                     helperText={errors.start_date?.message}
                     disabled={isCompleted}
@@ -255,7 +255,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     label="Due Date"
                     type="date"
                     fullWidth
-                    InputLabelProps={{ shrink: true }}
+                    slotProps={{ inputLabel: { shrink: true } }}
                     error={!!errors.due_date}
                     helperText={errors.due_date?.message}
                     disabled={isCompleted}

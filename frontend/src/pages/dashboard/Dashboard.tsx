@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { 
   Typography, 
-  Grid, 
-  Box, 
+  Box,
   Alert,
   Paper,
   List,
@@ -108,32 +107,32 @@ const Dashboard: React.FC = () => {
   };
 
   const renderRecentNotifications = () => (
-    <Grid xs={12} md={4}>
-      <Paper elevation={1} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ p: 3, pb: 1 }}>
-          <Typography variant="h6" fontWeight={600}>
+    <Box sx={{ width: '100%', mt: 3 }}>
+      <Paper elevation={0} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+        <Box sx={{ p: 3, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+          <Typography variant="h6" fontWeight={700}>
             Recent Notifications
           </Typography>
         </Box>
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, p: 2 }}>
           {notifLoading ? (
-            <Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={250} /></Box>
+            <Box sx={{ p: 2 }}><Skeleton variant="rectangular" height={150} /></Box>
           ) : notifError ? (
             <ErrorState onRetry={loadNotificationData} />
           ) : notifications && notifications.length > 0 ? (
             <List disablePadding>
               {notifications.slice(0, 5).map((notif, idx) => (
                 <React.Fragment key={notif.id}>
-                  <ListItem sx={{ py: 2, px: 3 }}>
+                  <ListItem sx={{ py: 1.5, px: 2, borderRadius: 2, '&:hover': { bgcolor: 'action.hover' } }}>
                     <ListItemText 
-                      primary={<Typography variant="subtitle2" sx={{ fontWeight: 600, color: notif.is_read ? 'text.secondary' : 'text.primary' }}>{notif.title}</Typography>}
+                      primary={<Typography variant="subtitle2" sx={{ fontWeight: notif.is_read ? 500 : 700, color: notif.is_read ? 'text.secondary' : 'text.primary' }}>{notif.title}</Typography>}
                       secondary={<Typography variant="body2" noWrap color="text.secondary">{notif.message}</Typography>}
                     />
                     {!notif.is_read && (
                       <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'primary.main', ml: 1, flexShrink: 0 }} />
                     )}
                   </ListItem>
-                  {idx < Math.min(notifications.length - 1, 4) && <Divider />}
+                  {idx < Math.min(notifications.length - 1, 4) && <Divider variant="middle" />}
                 </React.Fragment>
               ))}
             </List>
@@ -142,269 +141,273 @@ const Dashboard: React.FC = () => {
           )}
         </Box>
       </Paper>
-    </Grid>
+    </Box>
   );
 
   const renderAdminWidgets = () => {
     const admin = adminData;
     return (
-      <>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Total Employees"
-            value={admin?.stats?.totalEmployees || 0}
-            icon={<PeopleIcon />}
-            color={theme.palette.primary.main}
-            loading={loading}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Total Tasks"
-            value={admin?.stats?.totalTasks || 0}
-            icon={<AssignmentIcon />}
-            color={theme.palette.info.main}
-            loading={loading}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Completed Tasks"
-            value={admin?.stats?.completedTasks || 0}
-            icon={<TaskAltIcon />}
-            color={theme.palette.success.main}
-            loading={loading}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Pending/In-Progress"
-            value={(admin?.stats?.pendingTasks || 0) + (admin?.stats?.inProgressTasks || 0)}
-            icon={<PendingActionsIcon />}
-            color={theme.palette.warning.main}
-            loading={loading}
-          />
-        </Grid>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, flexWrap: 'wrap', gap: 3 }}>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Total Employees"
+              value={admin?.stats?.totalEmployees || 0}
+              icon={<PeopleIcon />}
+              color={theme.palette.primary.main}
+              loading={loading}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Total Tasks"
+              value={admin?.stats?.totalTasks || 0}
+              icon={<AssignmentIcon />}
+              color={theme.palette.info.main}
+              loading={loading}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Completed Tasks"
+              value={admin?.stats?.completedTasks || 0}
+              icon={<TaskAltIcon />}
+              color={theme.palette.success.main}
+              loading={loading}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Pending/In-Progress"
+              value={(admin?.stats?.pendingTasks || 0) + (admin?.stats?.inProgressTasks || 0)}
+              icon={<PendingActionsIcon />}
+              color={theme.palette.warning.main}
+              loading={loading}
+            />
+          </Box>
+        </Box>
 
-        {/* Charts & Lists */}
-        <Grid xs={12} md={8}>
-          <Paper elevation={1} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom fontWeight={600}>
-              Task Status Overview
-            </Typography>
-            <Box sx={{ flexGrow: 1 }}>
-              {loading ? (
-                <Skeleton variant="rectangular" height={300} />
-              ) : error ? (
-                <ErrorState onRetry={loadDashboardData} />
-              ) : (admin?.stats && (admin.stats.totalTasks > 0)) ? (
-                <Box sx={{ width: '100%', height: 320 }}>
-                  <BarChart
-                    xAxis={[{ scaleType: 'band', data: ['Completed', 'In Progress', 'Pending', 'Overdue'] }]}
-                    series={[
-                      { 
-                        data: [
-                          admin.stats.completedTasks, 
-                          admin.stats.inProgressTasks, 
-                          admin.stats.pendingTasks, 
-                          admin.stats.overdueTasks
-                        ],
-                        color: theme.palette.primary.main
-                      }
-                    ]}
-                    height={300}
-                  />
-                </Box>
-              ) : (
-                <EmptyState icon={<CheckBoxOutlineBlankIcon fontSize="large" />} message="No tasks data available" />
-              )}
-            </Box>
-          </Paper>
-        </Grid>
-
-        <Grid xs={12} md={4}>
-          <Paper elevation={1} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ p: 3, pb: 1 }}>
-              <Typography variant="h6" fontWeight={600}>
-                Recent Tasks
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+          <Box sx={{ flex: { xs: '1 1 100%', md: '2 1 0%' } }}>
+            <Paper elevation={0} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+              <Typography variant="h6" gutterBottom fontWeight={700}>
+                Task Status Overview
               </Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              {loading ? (
-                <Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={250} /></Box>
-              ) : error ? (
-                <ErrorState onRetry={loadDashboardData} />
-              ) : admin?.recentTasks && admin.recentTasks.length > 0 ? (
-                <List disablePadding>
-                  {admin.recentTasks.slice(0, 5).map((task, idx) => (
-                    <React.Fragment key={task.id}>
-                      <ListItem sx={{ py: 2, px: 3 }}>
-                        <ListItemText 
-                          primary={<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{task.title}</Typography>}
-                          secondary={new Date(task.due_date).toLocaleDateString()}
-                        />
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
-                          <Chip size="small" label={task.status} color={getStatusColor(task.status)} />
-                          <Chip size="small" label={task.priority} color={getPriorityColor(task.priority)} variant="outlined" />
-                        </Box>
-                      </ListItem>
-                      {idx < Math.min(admin.recentTasks.length - 1, 4) && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-              ) : (
-                <EmptyState icon={<CheckBoxOutlineBlankIcon fontSize="large" />} message="No recent tasks" />
-              )}
-            </Box>
-          </Paper>
-        </Grid>
-        
+              <Box sx={{ flexGrow: 1, mt: 2 }}>
+                {loading ? (
+                  <Skeleton variant="rectangular" height={300} />
+                ) : error ? (
+                  <ErrorState onRetry={loadDashboardData} />
+                ) : (admin?.stats && (admin.stats.totalTasks > 0)) ? (
+                  <Box sx={{ width: '100%', height: 320 }}>
+                    <BarChart
+                      xAxis={[{ scaleType: 'band', data: ['Completed', 'In Progress', 'Pending', 'Overdue'] }]}
+                      series={[
+                        { 
+                          data: [
+                            admin.stats.completedTasks, 
+                            admin.stats.inProgressTasks, 
+                            admin.stats.pendingTasks, 
+                            admin.stats.overdueTasks
+                          ],
+                          color: theme.palette.primary.main
+                        }
+                      ]}
+                      height={300}
+                    />
+                  </Box>
+                ) : (
+                  <EmptyState icon={<CheckBoxOutlineBlankIcon fontSize="large" />} message="No tasks data available" />
+                )}
+              </Box>
+            </Paper>
+          </Box>
+
+          <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+            <Paper elevation={0} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+              <Box sx={{ p: 3, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <Typography variant="h6" fontWeight={700}>
+                  Recent Tasks
+                </Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1, p: 2 }}>
+                {loading ? (
+                  <Box sx={{ p: 2 }}><Skeleton variant="rectangular" height={250} /></Box>
+                ) : error ? (
+                  <ErrorState onRetry={loadDashboardData} />
+                ) : admin?.recentTasks && admin.recentTasks.length > 0 ? (
+                  <List disablePadding>
+                    {admin.recentTasks.slice(0, 5).map((task, idx) => (
+                      <React.Fragment key={task.id}>
+                        <ListItem sx={{ py: 1.5, px: 2, borderRadius: 2, '&:hover': { bgcolor: 'action.hover' } }}>
+                          <ListItemText 
+                            primary={<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{task.title}</Typography>}
+                            secondary={new Date(task.due_date).toLocaleDateString()}
+                          />
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
+                            <Chip size="small" label={task.status} color={getStatusColor(task.status)} sx={{ fontWeight: 600, fontSize: '0.7rem' }} />
+                            <Chip size="small" label={task.priority} color={getPriorityColor(task.priority)} variant="outlined" sx={{ fontSize: '0.7rem' }} />
+                          </Box>
+                        </ListItem>
+                        {idx < Math.min(admin.recentTasks.length - 1, 4) && <Divider variant="middle" />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                ) : (
+                  <EmptyState icon={<CheckBoxOutlineBlankIcon fontSize="large" />} message="No recent tasks" />
+                )}
+              </Box>
+            </Paper>
+          </Box>
+        </Box>
         {renderRecentNotifications()}
-      </>
+      </Box>
     );
   };
 
   const renderEmployeeWidgets = () => {
     const emp = employeeData;
     return (
-      <>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="My Tasks"
-            value={emp?.stats?.myTasks || 0}
-            icon={<AssignmentIcon />}
-            color={theme.palette.info.main}
-            loading={loading}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Completed"
-            value={emp?.stats?.completedTasks || 0}
-            icon={<TaskAltIcon />}
-            color={theme.palette.success.main}
-            loading={loading}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Due Today"
-            value={emp?.stats?.tasksDueToday || 0}
-            icon={<EventAvailableIcon />}
-            color={theme.palette.warning.main}
-            loading={loading}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <DashboardCard
-            title="Overdue"
-            value={emp?.stats?.overdueTasks || 0}
-            icon={<WarningIcon />}
-            color={theme.palette.error.main}
-            loading={loading}
-          />
-        </Grid>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, flexWrap: 'wrap', gap: 3 }}>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="My Tasks"
+              value={emp?.stats?.myTasks || 0}
+              icon={<AssignmentIcon />}
+              color={theme.palette.info.main}
+              loading={loading}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Completed"
+              value={emp?.stats?.completedTasks || 0}
+              icon={<TaskAltIcon />}
+              color={theme.palette.success.main}
+              loading={loading}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Due Today"
+              value={emp?.stats?.tasksDueToday || 0}
+              icon={<EventAvailableIcon />}
+              color={theme.palette.warning.main}
+              loading={loading}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
+            <DashboardCard
+              title="Overdue"
+              value={emp?.stats?.overdueTasks || 0}
+              icon={<WarningIcon />}
+              color={theme.palette.error.main}
+              loading={loading}
+            />
+          </Box>
+        </Box>
 
-        <Grid xs={12} md={4}>
-          <Paper elevation={1} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ p: 3, pb: 1 }}>
-              <Typography variant="h6" fontWeight={600}>
-                Upcoming Deadlines
-              </Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              {loading ? (
-                <Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={250} /></Box>
-              ) : error ? (
-                <ErrorState onRetry={loadDashboardData} />
-              ) : emp?.upcomingDeadlines && emp.upcomingDeadlines.length > 0 ? (
-                <List disablePadding>
-                  {emp.upcomingDeadlines.slice(0, 5).map((task, idx) => (
-                    <React.Fragment key={task.id}>
-                      <ListItem sx={{ py: 2, px: 3 }}>
-                        <ListItemText 
-                          primary={<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{task.title}</Typography>}
-                          secondary={`Due: ${new Date(task.due_date).toLocaleDateString()}`}
-                        />
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
-                          <Chip size="small" label={task.priority} color={getPriorityColor(task.priority)} />
-                        </Box>
-                      </ListItem>
-                      {idx < Math.min(emp.upcomingDeadlines.length - 1, 4) && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-              ) : (
-                <EmptyState icon={<EventBusyIcon fontSize="large" />} message="No upcoming deadlines" />
-              )}
-            </Box>
-          </Paper>
-        </Grid>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+          <Box sx={{ flex: 1 }}>
+            <Paper elevation={0} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+              <Box sx={{ p: 3, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <Typography variant="h6" fontWeight={700}>
+                  Upcoming Deadlines
+                </Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1, p: 2 }}>
+                {loading ? (
+                  <Box sx={{ p: 2 }}><Skeleton variant="rectangular" height={250} /></Box>
+                ) : error ? (
+                  <ErrorState onRetry={loadDashboardData} />
+                ) : emp?.upcomingDeadlines && emp.upcomingDeadlines.length > 0 ? (
+                  <List disablePadding>
+                    {emp.upcomingDeadlines.slice(0, 5).map((task, idx) => (
+                      <React.Fragment key={task.id}>
+                        <ListItem sx={{ py: 1.5, px: 2, borderRadius: 2, '&:hover': { bgcolor: 'action.hover' } }}>
+                          <ListItemText 
+                            primary={<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{task.title}</Typography>}
+                            secondary={`Due: ${new Date(task.due_date).toLocaleDateString()}`}
+                          />
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
+                            <Chip size="small" label={task.priority} color={getPriorityColor(task.priority)} sx={{ fontWeight: 600, fontSize: '0.7rem' }} />
+                          </Box>
+                        </ListItem>
+                        {idx < Math.min(emp.upcomingDeadlines.length - 1, 4) && <Divider variant="middle" />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                ) : (
+                  <EmptyState icon={<EventBusyIcon fontSize="large" />} message="No upcoming deadlines" />
+                )}
+              </Box>
+            </Paper>
+          </Box>
 
-        <Grid xs={12} md={4}>
-          <Paper elevation={1} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ p: 3, pb: 1 }}>
-              <Typography variant="h6" fontWeight={600}>
-                Recently Assigned
-              </Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              {loading ? (
-                <Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={250} /></Box>
-              ) : error ? (
-                <ErrorState onRetry={loadDashboardData} />
-              ) : emp?.latestAssignedTasks && emp.latestAssignedTasks.length > 0 ? (
-                <List disablePadding>
-                  {emp.latestAssignedTasks.slice(0, 5).map((task, idx) => (
-                    <React.Fragment key={task.id}>
-                      <ListItem sx={{ py: 2, px: 3 }}>
-                        <ListItemText 
-                          primary={<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{task.title}</Typography>}
-                          secondary={`Status: ${task.status}`}
-                        />
-                        <Chip size="small" label={task.priority} color={getPriorityColor(task.priority)} variant="outlined" />
-                      </ListItem>
-                      {idx < Math.min(emp.latestAssignedTasks.length - 1, 4) && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-              ) : (
-                <EmptyState icon={<CheckBoxOutlineBlankIcon fontSize="large" />} message="No recent tasks" />
-              )}
-            </Box>
-          </Paper>
-        </Grid>
+          <Box sx={{ flex: 1 }}>
+            <Paper elevation={0} sx={{ p: 0, height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+              <Box sx={{ p: 3, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <Typography variant="h6" fontWeight={700}>
+                  Recently Assigned
+                </Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1, p: 2 }}>
+                {loading ? (
+                  <Box sx={{ p: 2 }}><Skeleton variant="rectangular" height={250} /></Box>
+                ) : error ? (
+                  <ErrorState onRetry={loadDashboardData} />
+                ) : emp?.latestAssignedTasks && emp.latestAssignedTasks.length > 0 ? (
+                  <List disablePadding>
+                    {emp.latestAssignedTasks.slice(0, 5).map((task, idx) => (
+                      <React.Fragment key={task.id}>
+                        <ListItem sx={{ py: 1.5, px: 2, borderRadius: 2, '&:hover': { bgcolor: 'action.hover' } }}>
+                          <ListItemText 
+                            primary={<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{task.title}</Typography>}
+                            secondary={`Status: ${task.status}`}
+                          />
+                          <Chip size="small" label={task.priority} color={getPriorityColor(task.priority)} variant="outlined" sx={{ fontSize: '0.7rem' }} />
+                        </ListItem>
+                        {idx < Math.min(emp.latestAssignedTasks.length - 1, 4) && <Divider variant="middle" />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                ) : (
+                  <EmptyState icon={<CheckBoxOutlineBlankIcon fontSize="large" />} message="No recent tasks" />
+                )}
+              </Box>
+            </Paper>
+          </Box>
+        </Box>
 
         {renderRecentNotifications()}
-      </>
+      </Box>
     );
   };
 
   return (
-    <PageContainer title="Dashboard">
+    <PageContainer title="Dashboard" disablePaper>
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" fontWeight={700} color="text.primary" gutterBottom>
+          <Typography variant="h4" fontWeight={800} color="text.primary" gutterBottom>
             {greeting}, {user?.full_name?.split(' ')[0] || 'User'}!
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {todayDate}
           </Typography>
         </Box>
-        <Button variant="outlined" startIcon={<RefreshIcon />} onClick={() => { loadDashboardData(); loadNotificationData(); }}>
-          Refresh
+        <Button variant="contained" color="primary" startIcon={<RefreshIcon />} onClick={() => { loadDashboardData(); loadNotificationData(); }} sx={{ borderRadius: 2, px: 3, boxShadow: 'none' }}>
+          Refresh Data
         </Button>
       </Box>
 
       {error && !loading && !adminData && !employeeData && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
           Dashboard failed to load completely: {error}
         </Alert>
       )}
 
-      <Grid container spacing={3}>
-        {isAdmin ? renderAdminWidgets() : renderEmployeeWidgets()}
-      </Grid>
+      {isAdmin ? renderAdminWidgets() : renderEmployeeWidgets()}
     </PageContainer>
   );
 };

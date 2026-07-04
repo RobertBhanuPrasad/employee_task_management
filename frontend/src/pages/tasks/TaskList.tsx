@@ -164,6 +164,7 @@ const TaskList: React.FC = () => {
           color={getPriorityColor(params.value)} 
           size="small" 
           variant="outlined"
+          sx={{ fontWeight: 600, borderRadius: 2 }}
         />
       )
     },
@@ -176,6 +177,7 @@ const TaskList: React.FC = () => {
           label={params.value} 
           color={getStatusColor(params.value)} 
           size="small" 
+          sx={{ fontWeight: 600, borderRadius: 2 }}
         />
       )
     },
@@ -223,9 +225,9 @@ const TaskList: React.FC = () => {
   ];
 
   return (
-    <PageContainer title="Task Management">
+    <PageContainer title="Task Management" disablePaper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h4" fontWeight={700} color="text.primary">
+        <Typography variant="h4" fontWeight={800} color="text.primary">
           Tasks
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -241,7 +243,7 @@ const TaskList: React.FC = () => {
       </Box>
 
       {error ? (
-        <Paper elevation={1} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Paper elevation={0} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
           <Alert severity="error" sx={{ mb: 3, width: '100%', maxWidth: 600 }}>
             {error === 'Forbidden' || error.includes('403') || error.includes('Permission') 
               ? 'Permission Denied: You do not have access to view this data.'
@@ -252,20 +254,22 @@ const TaskList: React.FC = () => {
           </Button>
         </Paper>
       ) : (
-        <Paper elevation={1} sx={{ p: 0, overflow: 'hidden' }}>
-          <Box sx={{ p: 2, display: 'flex', gap: 2, flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider' }}>
+        <Paper elevation={0} sx={{ p: 0, overflow: 'hidden', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)', width: '100%' }}>
+          <Box sx={{ p: 2, display: 'flex', gap: 2, flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
             <TextField
               placeholder="Search by Title, Employee..."
               variant="outlined"
               size="small"
               onChange={handleSearchChange}
-              sx={{ flexGrow: 1, minWidth: 250 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
+              sx={{ flexGrow: 1, minWidth: { xs: '100%', sm: 250 }, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }
               }}
             />
             <TextField
@@ -277,7 +281,7 @@ const TaskList: React.FC = () => {
                 setStatusFilter(e.target.value);
                 setPaginationModel(prev => ({ ...prev, page: 0 }));
               }}
-              sx={{ minWidth: 150 }}
+              sx={{ flexGrow: 1, minWidth: { xs: '100%', sm: 150 }, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             >
               <MenuItem value="">All Status</MenuItem>
               <MenuItem value="PENDING">Pending</MenuItem>
@@ -293,7 +297,7 @@ const TaskList: React.FC = () => {
                 setPriorityFilter(e.target.value);
                 setPaginationModel(prev => ({ ...prev, page: 0 }));
               }}
-              sx={{ minWidth: 150 }}
+              sx={{ flexGrow: 1, minWidth: { xs: '100%', sm: 150 }, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             >
               <MenuItem value="">All Priorities</MenuItem>
               <MenuItem value="LOW">Low</MenuItem>
@@ -310,7 +314,7 @@ const TaskList: React.FC = () => {
                   setEmployeeFilter(e.target.value);
                   setPaginationModel(prev => ({ ...prev, page: 0 }));
                 }}
-                sx={{ minWidth: 150 }}
+                sx={{ flexGrow: 1, minWidth: { xs: '100%', sm: 150 }, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               >
                 <MenuItem value="">All Employees</MenuItem>
                 {employees.map(emp => (
@@ -339,9 +343,22 @@ const TaskList: React.FC = () => {
               }}
               sx={{
                 border: 0,
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: 'background.default',
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
+                '& .MuiDataGrid-cell': {
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
                 '& .MuiDataGrid-cell:focus': {
                   outline: 'none',
                 },
+                '& .MuiDataGrid-row:hover': {
+                  backgroundColor: 'action.hover',
+                },
+                '& .MuiDataGrid-footerContainer': {
+                  borderTop: '1px solid rgba(0,0,0,0.05)',
+                }
               }}
             />
           </Box>

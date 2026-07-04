@@ -11,7 +11,6 @@ import {
   Alert,
   Link,
   Container,
-  Grid,
   MenuItem,
   Box,
   Typography,
@@ -96,35 +95,60 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', py: 4 }}>
-      <Card sx={{ width: '100%', p: 2, boxShadow: 3 }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        py: { xs: 4, sm: 6 },
+        px: 2,
+      }}
+    >
+      <Card
+        sx={{
+          width: '100%',
+          maxWidth: 600,
+          p: { xs: 2, sm: 4 },
+          boxShadow: '0 12px 40px rgba(31, 38, 135, 0.1)',
+          borderRadius: 4,
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.5)',
+        }}
+      >
+        <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
             <Box
               sx={{
-                width: 60,
-                height: 60,
+                width: 72,
+                height: 72,
                 bgcolor: 'primary.main',
-                borderRadius: '50%',
+                borderRadius: '24%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontWeight: 'bold',
+                fontWeight: 800,
+                fontSize: 24,
                 mb: 2,
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
               }}
             >
-              LOGO
+              ETM
             </Box>
-            <Typography variant="h5" fontWeight="bold">Create an Account</Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="h4" fontWeight="800" color="text.primary" gutterBottom>
+              Create an Account
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
               Register for Employee Task Management
             </Typography>
           </Box>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Grid container spacing={2}>
-              <Grid xs={12} sm={6}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mb: 4 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
                 <Controller
                   name="fullName"
                   control={control}
@@ -136,12 +160,10 @@ const Register = () => {
                       fullWidth
                       error={!!errors.fullName}
                       helperText={errors.fullName?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     />
                   )}
                 />
-              </Grid>
-
-              <Grid xs={12} sm={6}>
                 <Controller
                   name="email"
                   control={control}
@@ -153,12 +175,13 @@ const Register = () => {
                       fullWidth
                       error={!!errors.email}
                       helperText={errors.email?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     />
                   )}
                 />
-              </Grid>
+              </Box>
 
-              <Grid xs={12} sm={6}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
                 <Controller
                   name="password"
                   control={control}
@@ -171,6 +194,7 @@ const Register = () => {
                       fullWidth
                       error={!!errors.password}
                       helperText={errors.password?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                       slotProps={{
                         input: {
                           endAdornment: (
@@ -185,9 +209,6 @@ const Register = () => {
                     />
                   )}
                 />
-              </Grid>
-
-              <Grid xs={12} sm={6}>
                 <Controller
                   name="confirmPassword"
                   control={control}
@@ -200,6 +221,7 @@ const Register = () => {
                       fullWidth
                       error={!!errors.confirmPassword}
                       helperText={errors.confirmPassword?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                       slotProps={{
                         input: {
                           endAdornment: (
@@ -214,9 +236,9 @@ const Register = () => {
                     />
                   )}
                 />
-              </Grid>
+              </Box>
 
-              <Grid xs={12} sm={4}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
                 <Controller
                   name="role"
                   control={control}
@@ -229,6 +251,7 @@ const Register = () => {
                       fullWidth
                       error={!!errors.role}
                       helperText={errors.role?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     >
                       <MenuItem value="employee">Employee</MenuItem>
                       <MenuItem value="admin">Admin</MenuItem>
@@ -236,9 +259,6 @@ const Register = () => {
                     </TextField>
                   )}
                 />
-              </Grid>
-
-              <Grid xs={12} sm={4}>
                 <Controller
                   name="department"
                   control={control}
@@ -250,12 +270,10 @@ const Register = () => {
                       fullWidth
                       error={!!errors.department}
                       helperText={errors.department?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     />
                   )}
                 />
-              </Grid>
-
-              <Grid xs={12} sm={4}>
                 <Controller
                   name="designation"
                   control={control}
@@ -267,13 +285,14 @@ const Register = () => {
                       fullWidth
                       error={!!errors.designation}
                       helperText={errors.designation?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     />
                   )}
                 />
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
 
-            <Box mt={4}>
+            <Box sx={{ mt: 4 }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -282,20 +301,22 @@ const Register = () => {
                 size="large"
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                sx={{ py: 1.5, borderRadius: 2, fontWeight: 600, fontSize: '1rem', textTransform: 'none' }}
               >
                 {loading ? 'Registering...' : 'Register'}
               </Button>
             </Box>
           </form>
 
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography variant="body2">
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
               Already have an account?{' '}
               <Link
-                sx={{ cursor: 'pointer' }}
+                component="button"
                 variant="body2"
                 onClick={() => navigate('/login')}
                 underline="hover"
+                fontWeight={600}
               >
                 Back to Login
               </Link>
@@ -310,7 +331,7 @@ const Register = () => {
         onClose={() => setErrorMsg('')}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%', borderRadius: 2 }}>
           {errorMsg}
         </Alert>
       </Snackbar>
@@ -321,11 +342,11 @@ const Register = () => {
         onClose={() => setSuccessMsg('')}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setSuccessMsg('')} severity="success" sx={{ width: '100%' }}>
+        <Alert onClose={() => setSuccessMsg('')} severity="success" sx={{ width: '100%', borderRadius: 2 }}>
           {successMsg}
         </Alert>
       </Snackbar>
-    </Container>
+    </Box>
   );
 };
 

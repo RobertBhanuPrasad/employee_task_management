@@ -148,7 +148,7 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <PageContainer title="Reports Dashboard">
+    <PageContainer title="Reports Dashboard" disablePaper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Typography variant="h4" fontWeight={700} color="text.primary" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <AssessmentIcon fontSize="large" color="primary" /> Reports Dashboard
@@ -159,6 +159,7 @@ const Reports: React.FC = () => {
             startIcon={exportLoading ? <CircularProgress size={20} /> : <DownloadIcon />} 
             onClick={() => handleExport('csv')}
             disabled={exportLoading || loading}
+            sx={{ borderRadius: 2 }}
           >
             Export CSV
           </Button>
@@ -167,6 +168,7 @@ const Reports: React.FC = () => {
             startIcon={exportLoading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />} 
             onClick={() => handleExport('excel')}
             disabled={exportLoading || loading}
+            sx={{ borderRadius: 2 }}
           >
             Export Excel
           </Button>
@@ -247,7 +249,7 @@ const Reports: React.FC = () => {
       </Grid>
 
       {error ? (
-        <Paper elevation={1} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+        <Paper elevation={0} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3, borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
           <Alert severity="error" sx={{ mb: 3, width: '100%', maxWidth: 600 }}>
             {error}
           </Alert>
@@ -256,7 +258,7 @@ const Reports: React.FC = () => {
           </Button>
         </Paper>
       ) : (
-        <Paper elevation={1} sx={{ p: 0, overflow: 'hidden' }}>
+        <Paper elevation={0} sx={{ p: 0, overflow: 'hidden', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabIndex} onChange={(_, val) => setTabIndex(val)} variant="fullWidth">
               <Tab label="Completed Tasks Report" />
@@ -266,14 +268,14 @@ const Reports: React.FC = () => {
           </Box>
 
           {/* Filters Bar */}
-          <Box sx={{ p: 2, display: 'flex', gap: 2, flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider', bgcolor: 'background.default' }}>
+          <Box sx={{ p: 2, display: 'flex', gap: 2, flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.05)', bgcolor: 'background.default' }}>
             <TextField
               placeholder="Search..."
               variant="outlined"
               size="small"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              sx={{ flexGrow: 1, minWidth: 200 }}
+              sx={{ flexGrow: 1, minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             {tabIndex !== 2 && (
               <>
@@ -283,7 +285,7 @@ const Reports: React.FC = () => {
                   size="small"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  sx={{ minWidth: 150 }}
+                  sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                 >
                   <MenuItem value="">All Priorities</MenuItem>
                   <MenuItem value="LOW">Low</MenuItem>
@@ -297,7 +299,7 @@ const Reports: React.FC = () => {
                     size="small"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    sx={{ minWidth: 150 }}
+                    sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   >
                     <MenuItem value="">All Statuses</MenuItem>
                     <MenuItem value="PENDING">Pending</MenuItem>
@@ -312,7 +314,7 @@ const Reports: React.FC = () => {
               size="small"
               value={employeeId}
               onChange={(e) => setEmployeeId(e.target.value)}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               disabled={employeesLoading}
             >
               <MenuItem value="">All Employees</MenuItem>
@@ -326,8 +328,8 @@ const Reports: React.FC = () => {
               size="small"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ minWidth: 150 }}
+              slotProps={{ inputLabel: { shrink: true } }}
+              sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <TextField
               label="End Date"
@@ -335,8 +337,8 @@ const Reports: React.FC = () => {
               size="small"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ minWidth: 150 }}
+              slotProps={{ inputLabel: { shrink: true } }}
+              sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
           </Box>
 
@@ -357,9 +359,22 @@ const Reports: React.FC = () => {
               }}
               sx={{
                 border: 0,
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: 'background.default',
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
+                '& .MuiDataGrid-cell': {
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                },
                 '& .MuiDataGrid-cell:focus': {
                   outline: 'none',
                 },
+                '& .MuiDataGrid-row:hover': {
+                  backgroundColor: 'action.hover',
+                },
+                '& .MuiDataGrid-footerContainer': {
+                  borderTop: '1px solid rgba(0,0,0,0.05)',
+                }
               }}
             />
           </Box>
