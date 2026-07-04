@@ -97,34 +97,33 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, 
     }
   }, [open, isEdit, employee, reset, dispatch]);
 
-  useEffect(() => {
-    if (successMessage) {
+  const onSubmit = async (data: EmployeeFormValues) => {
+    try {
+      if (isEdit && employee) {
+        const payload: UpdateEmployeePayload = {
+          full_name: data.full_name,
+          role: data.role as 'ADMIN' | 'EMPLOYEE',
+          department: data.department,
+          designation: data.designation
+        };
+        await dispatch(updateEmployee({ id: employee.id, payload })).unwrap();
+      } else {
+        const createData = data as z.infer<typeof createSchema>;
+        const payload: CreateEmployeePayload = {
+          full_name: createData.full_name,
+          email: createData.email,
+          password: createData.password,
+          confirm_password: createData.confirm_password,
+          role: createData.role as 'ADMIN' | 'EMPLOYEE',
+          department: createData.department,
+          designation: createData.designation
+        };
+        await dispatch(createEmployee(payload)).unwrap();
+      }
       if (onSuccess) onSuccess();
       onClose();
-    }
-  }, [successMessage, onClose, onSuccess]);
-
-  const onSubmit = (data: EmployeeFormValues) => {
-    if (isEdit && employee) {
-      const payload: UpdateEmployeePayload = {
-        full_name: data.full_name,
-        role: data.role as 'ADMIN' | 'EMPLOYEE',
-        department: data.department,
-        designation: data.designation
-      };
-      dispatch(updateEmployee({ id: employee.id, payload }));
-    } else {
-      const createData = data as z.infer<typeof createSchema>;
-      const payload: CreateEmployeePayload = {
-        full_name: createData.full_name,
-        email: createData.email,
-        password: createData.password,
-        confirm_password: createData.confirm_password,
-        role: createData.role as 'ADMIN' | 'EMPLOYEE',
-        department: createData.department,
-        designation: createData.designation
-      };
-      dispatch(createEmployee(payload));
+    } catch (e) {
+      // Error handled by redux
     }
   };
 

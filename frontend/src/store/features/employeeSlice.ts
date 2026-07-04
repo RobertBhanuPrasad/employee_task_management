@@ -99,6 +99,7 @@ const employeeSlice = createSlice({
         state.total = action.payload?.pagination?.totalRecords || 0;
       })
       .addCase(fetchEmployees.rejected, (state, action) => {
+        if (action.meta.aborted) return;
         state.loading = false;
         state.error = action.payload as string;
       })

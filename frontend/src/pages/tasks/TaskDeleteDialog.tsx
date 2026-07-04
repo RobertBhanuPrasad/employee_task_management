@@ -30,16 +30,15 @@ const TaskDeleteDialog: React.FC<TaskDeleteDialogProps> = ({ open, onClose, task
     }
   }, [open, dispatch]);
 
-  useEffect(() => {
-    if (successMessage) {
-      if (onSuccess) onSuccess();
-      onClose();
-    }
-  }, [successMessage, onClose, onSuccess]);
-
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (task) {
-      dispatch(deleteTask(task.id));
+      try {
+        await dispatch(deleteTask(task.id)).unwrap();
+        if (onSuccess) onSuccess();
+        onClose();
+      } catch (e) {
+        // Error handled by redux
+      }
     }
   };
 

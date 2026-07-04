@@ -99,36 +99,35 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
     }
   }, [open, isEdit, task, reset, dispatch]);
 
-  useEffect(() => {
-    if (successMessage) {
+  const onSubmit = async (data: TaskFormValues) => {
+    try {
+      if (isEdit && task) {
+        const payload: UpdateTaskPayload = {
+          title: data.title,
+          description: data.description,
+          priority: data.priority,
+          status: data.status,
+          start_date: data.start_date,
+          due_date: data.due_date,
+          assigned_employee_id: data.assigned_employee_id
+        };
+        await dispatch(updateTask({ id: task.id, payload })).unwrap();
+      } else {
+        const payload: CreateTaskPayload = {
+          title: data.title,
+          description: data.description,
+          priority: data.priority,
+          status: data.status,
+          start_date: data.start_date,
+          due_date: data.due_date,
+          assigned_employee_id: data.assigned_employee_id
+        };
+        await dispatch(createTask(payload)).unwrap();
+      }
       if (onSuccess) onSuccess();
       onClose();
-    }
-  }, [successMessage, onClose, onSuccess]);
-
-  const onSubmit = (data: TaskFormValues) => {
-    if (isEdit && task) {
-      const payload: UpdateTaskPayload = {
-        title: data.title,
-        description: data.description,
-        priority: data.priority,
-        status: data.status,
-        start_date: data.start_date,
-        due_date: data.due_date,
-        assigned_employee_id: data.assigned_employee_id
-      };
-      dispatch(updateTask({ id: task.id, payload }));
-    } else {
-      const payload: CreateTaskPayload = {
-        title: data.title,
-        description: data.description,
-        priority: data.priority,
-        status: data.status,
-        start_date: data.start_date,
-        due_date: data.due_date,
-        assigned_employee_id: data.assigned_employee_id
-      };
-      dispatch(createTask(payload));
+    } catch (e) {
+      // Error handled by redux
     }
   };
 

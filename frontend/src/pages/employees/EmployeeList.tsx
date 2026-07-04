@@ -60,18 +60,23 @@ const EmployeeList: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
-  const fetchParams = useCallback(() => {
-    return {
-      page: paginationModel.page + 1,
-      limit: paginationModel.pageSize,
-      search: searchValue,
-      sort: sortModel[0]?.field,
-      order: sortModel[0]?.sort as 'asc' | 'desc' | undefined,
-    };
-  }, [paginationModel, sortModel, searchValue]);
+  const { page, pageSize } = paginationModel;
+  const sortField = sortModel[0]?.field;
+  const sortOrder = sortModel[0]?.sort;
+
+  const fetchParams = React.useMemo(() => ({
+    page: page + 1,
+    limit: pageSize,
+    search: searchValue,
+    sort: sortField,
+    order: sortOrder as 'asc' | 'desc' | undefined,
+  }), [page, pageSize, searchValue, sortField, sortOrder]);
 
   useEffect(() => {
-    dispatch(fetchEmployees(fetchParams()));
+    const promise = dispatch(fetchEmployees(fetchParams));
+    return () => {
+      promise.abort();
+    };
   }, [dispatch, fetchParams]);
 
   // Handle Search Debounce
@@ -88,24 +93,28 @@ const EmployeeList: React.FC = () => {
     debouncedSearch(e.target.value);
   };
 
-  const handleRefresh = () => {
-    dispatch(fetchEmployees(fetchParams()));
-  };
+  const handleRefresh = useCallback(() => {
+    dispatch(fetchEmployees(fetchParams));
+  }, [dispatch, fetchParams]);
 
-  const handleOpenForm = (employee?: Employee) => {
+  const handleOpenForm = useCallback((employee?: Employee) => {
     setSelectedEmployee(employee || null);
     setFormOpen(true);
-  };
+  }, []);
 
-  const handleOpenDelete = (employee: Employee) => {
+  const handleOpenDelete = useCallback((employee: Employee) => {
     setSelectedEmployee(employee);
     setDeleteOpen(true);
-  };
+  }, []);
 
-  const handleOpenDrawer = (employee: Employee) => {
+  const handleOpenDrawer = useCallback((employee: Employee) => {
     setSelectedEmployee(employee);
     setDrawerOpen(true);
-  };
+  }, []);
+
+  const handleCloseForm = useCallback(() => setFormOpen(false), []);
+  const handleCloseDelete = useCallback(() => setDeleteOpen(false), []);
+  const handleCloseDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -251,21 +260,22 @@ const EmployeeList: React.FC = () => {
         <>
           <EmployeeFormDialog 
             open={formOpen} 
-            onClose={() => setFormOpen(false)} 
+            onClose={handleCloseForm} 
             employee={selectedEmployee}
             onSuccess={handleRefresh}
           />
           <EmployeeDeleteDialog
             open={deleteOpen}
-            onClose={() => setDeleteOpen(false)}
+            onClose={handleCloseDelete}
             employee={selectedEmployee}
+            onSuccess={handleRefresh}
           />
         </>
       )}
 
       <EmployeeDetailsDrawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleCloseDrawer}
         employee={selectedEmployee}
       />
 

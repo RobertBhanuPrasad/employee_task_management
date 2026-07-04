@@ -86,26 +86,34 @@ const TaskList: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  const fetchParams = useCallback(() => {
-    return {
-      page: paginationModel.page + 1,
-      limit: paginationModel.pageSize,
-      search: searchValue,
-      status: statusFilter,
-      priority: priorityFilter,
-      employeeId: employeeFilter ? parseInt(employeeFilter, 10) : undefined,
-      sort: sortModel[0]?.field,
-      order: sortModel[0]?.sort as 'asc' | 'desc' | undefined,
-    };
-  }, [paginationModel, sortModel, searchValue, statusFilter, priorityFilter, employeeFilter]);
+  const { page, pageSize } = paginationModel;
+  const sortField = sortModel[0]?.field;
+  const sortOrder = sortModel[0]?.sort;
+
+  const fetchParams = React.useMemo(() => ({
+    page: page + 1,
+    limit: pageSize,
+    search: searchValue,
+    status: statusFilter,
+    priority: priorityFilter,
+    employeeId: employeeFilter ? parseInt(employeeFilter, 10) : undefined,
+    sort: sortField,
+    order: sortOrder as 'asc' | 'desc' | undefined,
+  }), [page, pageSize, searchValue, statusFilter, priorityFilter, employeeFilter, sortField, sortOrder]);
 
   useEffect(() => {
-    dispatch(fetchTasks(fetchParams()));
+    const promise = dispatch(fetchTasks(fetchParams));
+    return () => {
+      promise.abort();
+    };
   }, [dispatch, fetchParams]);
 
   useEffect(() => {
     if (isAdmin) {
-      dispatch(fetchEmployees({ limit: 500 }));
+      const promise = dispatch(fetchEmployees({ limit: 500 }));
+      return () => {
+        promise.abort();
+      };
     }
   }, [dispatch, isAdmin]);
 
@@ -123,24 +131,28 @@ const TaskList: React.FC = () => {
     debouncedSearch(e.target.value);
   };
 
-  const handleRefresh = () => {
-    dispatch(fetchTasks(fetchParams()));
-  };
+  const handleRefresh = useCallback(() => {
+    dispatch(fetchTasks(fetchParams));
+  }, [dispatch, fetchParams]);
 
-  const handleOpenForm = (task?: Task) => {
+  const handleOpenForm = useCallback((task?: Task) => {
     setSelectedTask(task || null);
     setFormOpen(true);
-  };
+  }, []);
 
-  const handleOpenDelete = (task: Task) => {
+  const handleOpenDelete = useCallback((task: Task) => {
     setSelectedTask(task);
     setDeleteOpen(true);
-  };
+  }, []);
 
-  const handleOpenDrawer = (task: Task) => {
+  const handleOpenDrawer = useCallback((task: Task) => {
     setSelectedTask(task);
     setDrawerOpen(true);
-  };
+  }, []);
+
+  const handleCloseForm = useCallback(() => setFormOpen(false), []);
+  const handleCloseDelete = useCallback(() => setDeleteOpen(false), []);
+  const handleCloseDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -369,21 +381,22 @@ const TaskList: React.FC = () => {
         <>
           <TaskFormDialog 
             open={formOpen} 
-            onClose={() => setFormOpen(false)} 
+            onClose={handleCloseForm} 
             task={selectedTask}
             onSuccess={handleRefresh}
           />
           <TaskDeleteDialog
             open={deleteOpen}
-            onClose={() => setDeleteOpen(false)}
+            onClose={handleCloseDelete}
             task={selectedTask}
+            onSuccess={handleRefresh}
           />
         </>
       )}
 
       <TaskDetailsDrawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleCloseDrawer}
         task={selectedTask}
       />
 

@@ -63,19 +63,23 @@ const Dashboard: React.FC = () => {
   const isAdmin = user?.role === 'ADMIN';
   const loadDashboardData = React.useCallback(() => {
     if (isAdmin) {
-      dispatch(fetchAdminDashboard());
+      return dispatch(fetchAdminDashboard());
     } else {
-      dispatch(fetchEmployeeDashboard());
+      return dispatch(fetchEmployeeDashboard());
     }
   }, [dispatch, isAdmin]);
 
   const loadNotificationData = React.useCallback(() => {
-    dispatch(fetchNotifications({ limit: 5 }));
+    return dispatch(fetchNotifications({ limit: 5 }));
   }, [dispatch]);
 
   useEffect(() => {
-    loadDashboardData();
-    loadNotificationData();
+    const dashPromise = loadDashboardData();
+    const notifPromise = loadNotificationData();
+    return () => {
+      if (dashPromise) dashPromise.abort();
+      if (notifPromise) notifPromise.abort();
+    };
   }, [loadDashboardData, loadNotificationData]);
 
   // Greeting based on time

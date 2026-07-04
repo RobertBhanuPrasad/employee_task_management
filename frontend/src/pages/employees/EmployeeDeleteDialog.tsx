@@ -30,16 +30,15 @@ const EmployeeDeleteDialog: React.FC<EmployeeDeleteDialogProps> = ({ open, onClo
     }
   }, [open, dispatch]);
 
-  useEffect(() => {
-    if (successMessage) {
-      if (onSuccess) onSuccess();
-      onClose();
-    }
-  }, [successMessage, onClose, onSuccess]);
-
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (employee) {
-      dispatch(deleteEmployee(employee.id));
+      try {
+        await dispatch(deleteEmployee(employee.id)).unwrap();
+        if (onSuccess) onSuccess();
+        onClose();
+      } catch (e) {
+        // Error handled by redux
+      }
     }
   };
 
