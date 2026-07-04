@@ -23,6 +23,7 @@ import Logout from '@mui/icons-material/Logout';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../store/features/authSlice';
+import { fetchUnreadCount } from '../store/features/notificationSlice';
 import type { AppDispatch, RootState } from '../store';
 import { drawerWidthExpanded, drawerWidthCollapsed } from './Sidebar';
 
@@ -76,9 +77,9 @@ const Topbar: React.FC<TopbarProps> = ({ handleDrawerToggle, desktopOpen }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
+  const { unreadCount } = useSelector((state: RootState) => state.notification);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [anchorElNotif, setAnchorElNotif] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -99,6 +100,23 @@ const Topbar: React.FC<TopbarProps> = ({ handleDrawerToggle, desktopOpen }) => {
     await dispatch(logoutUser());
     navigate('/login', { replace: true });
   };
+
+  React.useEffect(() => {
+    if (user) {
+      dispatch(fetchUnreadCount());
+      const interval = setInterval(() => {
+        dispatch(fetchUnreadCount());
+      }, 60000); // Check every minute
+      
+      const handleFocus = () => dispatch(fetchUnreadCount());
+      window.addEventListener('focus', handleFocus);
+      
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('focus', handleFocus);
+      };
+    }
+  }, [dispatch, user]);
 
   const drawerWidth = desktopOpen ? drawerWidthExpanded : drawerWidthCollapsed;
 
@@ -145,21 +163,12 @@ const Topbar: React.FC<TopbarProps> = ({ handleDrawerToggle, desktopOpen }) => {
             size="large"
             aria-label="show new notifications"
             color="inherit"
-            onClick={handleOpenNotifMenu}
+            onClick={() => navigate('/notifications')}
           >
-            <Badge badgeContent={3} color="error">
+            <Badge badgeContent={unreadCount} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Menu
-            anchorEl={anchorElNotif}
-            open={Boolean(anchorElNotif)}
-            onClose={handleCloseNotifMenu}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem onClick={handleCloseNotifMenu}>No new notifications</MenuItem>
-          </Menu>
 
           <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'flex-end', ml: 2, mr: 1 }}>
             <Typography variant="subtitle2" sx={{ lineHeight: 1.2, fontWeight: 600 }}>
