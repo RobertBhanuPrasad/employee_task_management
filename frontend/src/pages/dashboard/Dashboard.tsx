@@ -294,9 +294,9 @@ const Dashboard: React.FC = () => {
           </Box>
           <Box sx={{ flex: '1 1 calc(50% - 24px)', md: { flex: '1 1 calc(25% - 24px)' } }}>
             <DashboardCard
-              title="Due Today"
-              value={emp?.stats?.tasksDueToday || 0}
-              icon={<EventAvailableIcon />}
+              title="Pending/In-Progress"
+              value={(emp?.stats?.pendingTasks || 0) + (emp?.stats?.inProgressTasks || 0)}
+              icon={<PendingActionsIcon />}
               color={theme.palette.warning.main}
               loading={loading}
             />

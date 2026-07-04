@@ -255,7 +255,6 @@ const Register = () => {
                     >
                       <MenuItem value="employee">Employee</MenuItem>
                       <MenuItem value="admin">Admin</MenuItem>
-                      <MenuItem value="manager">Manager</MenuItem>
                     </TextField>
                   )}
                 />

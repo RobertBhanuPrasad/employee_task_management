@@ -158,6 +158,17 @@ const TaskList: React.FC = () => {
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'title', headerName: 'Title', flex: 1, minWidth: 200 },
     { 
+      field: 'description', 
+      headerName: 'Description', 
+      flex: 1, 
+      minWidth: 250,
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant="body2" noWrap title={params.value || ''} color={params.value ? 'text.primary' : 'text.disabled'}>
+          {params.value || 'No description'}
+        </Typography>
+      )
+    },
+    { 
       field: 'assigned_employee_name', 
       headerName: 'Assigned Employee', 
       flex: 1, 
