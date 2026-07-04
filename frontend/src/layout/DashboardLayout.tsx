@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Box, Toolbar, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Toolbar } from '@mui/material';
 import Topbar from './Topbar';
 import Sidebar, { drawerWidthExpanded, drawerWidthCollapsed } from './Sidebar';
 
 const DashboardLayout: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true);
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

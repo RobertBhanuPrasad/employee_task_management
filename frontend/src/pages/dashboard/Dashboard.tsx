@@ -62,24 +62,22 @@ const Dashboard: React.FC = () => {
   const { items: notifications, loading: notifLoading, error: notifError } = useSelector((state: RootState) => state.notification);
 
   const isAdmin = user?.role === 'ADMIN';
-  const data = isAdmin ? adminData : employeeData;
-
-  const loadDashboardData = () => {
+  const loadDashboardData = React.useCallback(() => {
     if (isAdmin) {
       dispatch(fetchAdminDashboard());
     } else {
       dispatch(fetchEmployeeDashboard());
     }
-  };
+  }, [dispatch, isAdmin]);
 
-  const loadNotificationData = () => {
+  const loadNotificationData = React.useCallback(() => {
     dispatch(fetchNotifications({ limit: 5 }));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     loadDashboardData();
     loadNotificationData();
-  }, [dispatch, isAdmin]);
+  }, [loadDashboardData, loadNotificationData]);
 
   // Greeting based on time
   const hour = new Date().getHours();

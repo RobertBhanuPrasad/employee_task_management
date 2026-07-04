@@ -72,7 +72,7 @@ export const downloadFile = createAsyncThunk(
     try {
       await uploadService.downloadFile(id, originalName);
       return id;
-    } catch (error: any) {
+    } catch {
       return rejectWithValue('Failed to download file');
     }
   }

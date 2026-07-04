@@ -110,11 +110,12 @@ const TaskList: React.FC = () => {
   }, [dispatch, isAdmin]);
 
   // Handle Search Debounce
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setSearchValue(value);
-      setPaginationModel(prev => ({ ...prev, page: 0 }));
-    }, 500),
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearchValue(value);
+        setPaginationModel(prev => ({ ...prev, page: 0 }));
+      }, 500),
     []
   );
 

@@ -11,7 +11,6 @@ import {
   ListItemText
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import FlagIcon from '@mui/icons-material/Flag';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EventBusyIcon from '@mui/icons-material/EventBusy';

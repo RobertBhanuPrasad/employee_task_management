@@ -88,13 +88,6 @@ const Topbar: React.FC<TopbarProps> = ({ handleDrawerToggle, desktopOpen }) => {
     setAnchorElUser(null);
   };
 
-  const handleOpenNotifMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNotif(event.currentTarget);
-  };
-  const handleCloseNotifMenu = () => {
-    setAnchorElNotif(null);
-  };
-
   const handleLogout = async () => {
     handleCloseUserMenu();
     await dispatch(logoutUser());

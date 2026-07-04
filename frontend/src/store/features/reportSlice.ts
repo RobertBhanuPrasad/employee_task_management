@@ -84,7 +84,7 @@ export const exportReportData = createAsyncThunk(
       window.URL.revokeObjectURL(url);
       
       return `Successfully exported ${type} report as ${format.toUpperCase()}`;
-    } catch (error: any) {
+    } catch {
       return rejectWithValue('Failed to export report');
     }
   }
