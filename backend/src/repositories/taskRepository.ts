@@ -1,5 +1,6 @@
 import pool from '../database/connection';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
 
 export class TaskRepository {
   async employeeExists(employeeId: number): Promise<boolean> {
@@ -18,12 +19,12 @@ export class TaskRepository {
     return rows.length > 0;
   }
 
-  async createTask(taskData: any): Promise<number> {
-    const { title, description, priority, status, start_date, due_date, assigned_employee_id } = taskData;
+  async createTask(taskData: CreateTaskDto & { created_by: number }): Promise<number> {
+    const { title, description, priority, status, start_date, due_date, assigned_employee_id, created_by } = taskData;
     const [result] = await pool.query<ResultSetHeader>(
-      `INSERT INTO tasks (title, description, priority, status, start_date, due_date, assigned_employee_id, created_at, updated_at) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-      [title, description || null, priority, status, start_date, due_date, assigned_employee_id]
+      `INSERT INTO tasks (title, description, priority, status, start_date, due_date, assigned_employee_id, created_by, created_at, updated_at) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+      [title, description || null, priority, status, start_date, due_date, assigned_employee_id, created_by]
     );
     return result.insertId;
   }
@@ -45,26 +46,26 @@ export class TaskRepository {
     const countParams: any[] = [];
 
     if (search) {
-      conditions.push('(title LIKE ? OR description LIKE ?)');
+      conditions.push('(t.title LIKE ? OR t.description LIKE ?)');
       const searchTerm = `%${search}%`;
       queryParams.push(searchTerm, searchTerm);
       countParams.push(searchTerm, searchTerm);
     }
     
     if (status) {
-      conditions.push('status = ?');
+      conditions.push('t.status = ?');
       queryParams.push(status);
       countParams.push(status);
     }
 
     if (priority) {
-      conditions.push('priority = ?');
+      conditions.push('t.priority = ?');
       queryParams.push(priority);
       countParams.push(priority);
     }
 
     if (employeeId !== null) {
-      conditions.push('assigned_employee_id = ?');
+      conditions.push('t.assigned_employee_id = ?');
       queryParams.push(employeeId);
       countParams.push(employeeId);
     }
@@ -72,16 +73,22 @@ export class TaskRepository {
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
     
     const allowedSortColumns = ['title', 'priority', 'status', 'start_date', 'due_date', 'created_at'];
-    const finalSortBy = allowedSortColumns.includes(sortBy) ? sortBy : 'created_at';
+    const finalSortBy = allowedSortColumns.includes(sortBy) ? `t.${sortBy}` : 't.created_at';
     const finalSortOrder = sortOrder === 'asc' ? 'ASC' : 'DESC';
 
-    const countQuery = `SELECT COUNT(*) as total FROM tasks ${whereClause}`;
+    const countQuery = `SELECT COUNT(*) as total FROM tasks t ${whereClause}`;
     const [countResult] = await pool.query<RowDataPacket[]>(countQuery, countParams);
     const totalRecords = countResult[0].total;
 
     const dataQuery = `
-      SELECT id, title, description, priority, status, start_date, due_date, assigned_employee_id, created_at, updated_at 
-      FROM tasks 
+      SELECT 
+        t.id, t.title, t.description, t.priority, t.status, t.start_date, t.due_date, 
+        t.assigned_employee_id, t.created_by, t.created_at, t.updated_at,
+        u1.full_name AS creator_name,
+        u2.full_name AS assigned_employee_name
+      FROM tasks t
+      LEFT JOIN users u1 ON t.created_by = u1.id
+      LEFT JOIN users u2 ON t.assigned_employee_id = u2.id
       ${whereClause} 
       ORDER BY ${finalSortBy} ${finalSortOrder} 
       LIMIT ? OFFSET ?
@@ -94,14 +101,22 @@ export class TaskRepository {
   }
 
   async getTaskById(taskId: number): Promise<RowDataPacket | null> {
-    const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT id, title, description, priority, status, start_date, due_date, assigned_employee_id, created_at, updated_at FROM tasks WHERE id = ?',
-      [taskId]
-    );
+    const dataQuery = `
+      SELECT 
+        t.id, t.title, t.description, t.priority, t.status, t.start_date, t.due_date, 
+        t.assigned_employee_id, t.created_by, t.created_at, t.updated_at,
+        u1.full_name AS creator_name,
+        u2.full_name AS assigned_employee_name
+      FROM tasks t
+      LEFT JOIN users u1 ON t.created_by = u1.id
+      LEFT JOIN users u2 ON t.assigned_employee_id = u2.id
+      WHERE t.id = ?
+    `;
+    const [rows] = await pool.query<RowDataPacket[]>(dataQuery, [taskId]);
     return rows.length > 0 ? rows[0] : null;
   }
 
-  async updateTask(taskId: number, taskData: any): Promise<boolean> {
+  async updateTask(taskId: number, taskData: UpdateTaskDto): Promise<boolean> {
     const fieldsToUpdate = [];
     const values = [];
 

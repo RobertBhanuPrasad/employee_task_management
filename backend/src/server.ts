@@ -2,6 +2,7 @@ import app from './app';
 import { config } from './config/env';
 import { testConnection } from './database/connection';
 import { logger } from './utils/logger';
+import { initScheduler } from './utils/cronScheduler';
 
 const startServer = async () => {
   try {
@@ -12,6 +13,9 @@ const startServer = async () => {
     app.listen(config.port, () => {
       console.log('Server running successfully');
       logger.info(`Server listening on port ${config.port} in ${config.nodeEnv} mode`);
+      
+      // Initialize Background Jobs
+      initScheduler();
     });
   } catch (error) {
     logger.error('Failed to start server:', error);

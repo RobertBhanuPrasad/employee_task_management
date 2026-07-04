@@ -1,6 +1,8 @@
 import taskRepository from '../repositories/taskRepository';
 import ApiError from '../utils/ApiError';
 import { JwtPayload } from '../utils/jwt';
+import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
+import notificationService from './notificationService';
 
 export class TaskService {
   private validateDates(startDateStr: string, dueDateStr: string) {
@@ -14,7 +16,11 @@ export class TaskService {
     }
   }
 
-  async createTask(taskData: any) {
+  async createTask(taskData: CreateTaskDto, user: JwtPayload) {
+    if (user.role !== 'ADMIN') {
+      throw new ApiError(403, 'Only admins can create tasks.');
+    }
+
     this.validateDates(taskData.start_date, taskData.due_date);
 
     const employeeExists = await taskRepository.employeeExists(taskData.assigned_employee_id);
@@ -22,7 +28,16 @@ export class TaskService {
       throw new ApiError(404, 'Assigned Employee must exist.');
     }
 
-    const newTaskId = await taskRepository.createTask(taskData);
+    const payload = {
+      ...taskData,
+      created_by: user.id
+    };
+
+    const newTaskId = await taskRepository.createTask(payload);
+    
+    // Fire Task Assigned Notification
+    await notificationService.createTaskAssignedNotification(taskData.assigned_employee_id, newTaskId);
+
     return await taskRepository.getTaskById(newTaskId);
   }
 
@@ -69,7 +84,11 @@ export class TaskService {
     return task;
   }
 
-  async updateTask(taskId: number, taskData: any) {
+  async updateTask(taskId: number, taskData: UpdateTaskDto, user: JwtPayload) {
+    if (user.role !== 'ADMIN') {
+      throw new ApiError(403, 'Only admins can update tasks.');
+    }
+
     const existingTask = await taskRepository.getTaskById(taskId);
     if (!existingTask) {
       throw new ApiError(404, 'Task not found');
@@ -97,10 +116,25 @@ export class TaskService {
     }
 
     await taskRepository.updateTask(taskId, taskData);
+    
+    // Fire Task Completed Notification if status changed to COMPLETED
+    if (taskData.status === 'COMPLETED' && existingTask.status !== 'COMPLETED') {
+      await notificationService.createTaskCompletedNotification(existingTask.assigned_employee_id, taskId);
+    }
+
+    // Fire Task Assigned Notification if assigned employee changed
+    if (taskData.assigned_employee_id && taskData.assigned_employee_id !== existingTask.assigned_employee_id) {
+      await notificationService.createTaskAssignedNotification(taskData.assigned_employee_id, taskId);
+    }
+
     return await taskRepository.getTaskById(taskId);
   }
 
-  async deleteTask(taskId: number) {
+  async deleteTask(taskId: number, user: JwtPayload) {
+    if (user.role !== 'ADMIN') {
+      throw new ApiError(403, 'Only admins can delete tasks.');
+    }
+
     const taskExists = await taskRepository.taskExists(taskId);
     if (!taskExists) {
       throw new ApiError(404, 'Task not found');

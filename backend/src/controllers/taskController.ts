@@ -6,7 +6,7 @@ import { getPaginationOptions, getPaginationData } from '../utils/paginationHelp
 
 class TaskController {
   createTask = asyncHandler(async (req: Request, res: Response) => {
-    const newTask = await taskService.createTask(req.body);
+    const newTask = await taskService.createTask(req.body, req.user!);
     return sendSuccessResponse(res, 201, 'Task created successfully', { task: newTask });
   });
 
@@ -45,13 +45,13 @@ class TaskController {
 
   updateTask = asyncHandler(async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id as string, 10);
-    const updatedTask = await taskService.updateTask(taskId, req.body);
+    const updatedTask = await taskService.updateTask(taskId, req.body, req.user!);
     return sendSuccessResponse(res, 200, 'Task updated successfully', { task: updatedTask });
   });
 
   deleteTask = asyncHandler(async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id as string, 10);
-    await taskService.deleteTask(taskId);
+    await taskService.deleteTask(taskId, req.user!);
     return sendSuccessResponse(res, 200, 'Task deleted successfully', {});
   });
 }
