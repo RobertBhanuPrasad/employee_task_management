@@ -31,7 +31,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         ) : (
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-              <Typography variant="subtitle2" color="text.secondary" fontWeight={600} textTransform="uppercase">
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase' }}>
                 {title}
               </Typography>
               <Box 

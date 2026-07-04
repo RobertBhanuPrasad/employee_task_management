@@ -12,10 +12,10 @@ export interface Notification {
 }
 
 export interface PaginatedNotifications {
-  data: Notification[];
-  meta: {
-    total: number;
-    page: number;
+  notifications: Notification[];
+  pagination: {
+    totalRecords: number;
+    currentPage: number;
     limit: number;
     totalPages: number;
   };

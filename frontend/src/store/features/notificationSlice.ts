@@ -41,8 +41,8 @@ const notificationSlice = createSlice({
       })
       .addCase(fetchNotifications.fulfilled, (state, action: PayloadAction<PaginatedNotifications>) => {
         state.loading = false;
-        state.items = action.payload.data;
-        state.total = action.payload.meta.total;
+        state.items = action.payload?.notifications || [];
+        state.total = action.payload?.pagination?.totalRecords || 0;
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.loading = false;

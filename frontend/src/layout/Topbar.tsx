@@ -193,20 +193,20 @@ const Topbar: React.FC<TopbarProps> = ({ handleDrawerToggle, desktopOpen }) => {
               <ListItemIcon>
                 <AccountCircle fontSize="small" />
               </ListItemIcon>
-              <Typography textAlign="center">Profile</Typography>
+              <Typography sx={{ textAlign: 'center' }}>Profile</Typography>
             </MenuItem>
             <MenuItem onClick={handleCloseUserMenu}>
               <ListItemIcon>
                 <Settings fontSize="small" />
               </ListItemIcon>
-              <Typography textAlign="center">Settings</Typography>
+              <Typography sx={{ textAlign: 'center' }}>Settings</Typography>
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>
                 <Logout fontSize="small" color="error" />
               </ListItemIcon>
-              <Typography textAlign="center" color="error">Logout</Typography>
+              <Typography sx={{ textAlign: 'center' }} color="error">Logout</Typography>
             </MenuItem>
           </Menu>
         </Box>

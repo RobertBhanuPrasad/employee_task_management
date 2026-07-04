@@ -83,7 +83,7 @@ const Login = () => {
     <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Card sx={{ width: '100%', p: 2, boxShadow: 3 }}>
         <CardContent>
-          <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
             {/* Logo Placeholder */}
             <Box
               sx={{
@@ -184,7 +184,7 @@ const Login = () => {
             </Button>
           </form>
 
-          <Box mt={3} textAlign="center">
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
             <Typography variant="body2">
               Don't have an account?{' '}
               <Link

@@ -99,7 +99,7 @@ const Register = () => {
     <Container maxWidth="md" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', py: 4 }}>
       <Card sx={{ width: '100%', p: 2, boxShadow: 3 }}>
         <CardContent>
-          <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
             <Box
               sx={{
                 width: 60,
@@ -288,7 +288,7 @@ const Register = () => {
             </Box>
           </form>
 
-          <Box mt={3} textAlign="center">
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
             <Typography variant="body2">
               Already have an account?{' '}
               <Link
