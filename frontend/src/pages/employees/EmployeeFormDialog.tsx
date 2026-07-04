@@ -1,0 +1,278 @@
+import React, { useEffect } from 'react';
+import { 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Button, 
+  TextField, 
+  MenuItem,
+  Grid,
+  Box,
+  Typography,
+  CircularProgress
+} from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../store';
+import { createEmployee, updateEmployee, clearEmployeeMessages } from '../../store/features/employeeSlice';
+import type { Employee, CreateEmployeePayload, UpdateEmployeePayload } from '../../services/employee.service';
+
+const baseSchema = {
+  full_name: z.string().min(1, 'Full name is required'),
+  email: z.string().min(1, 'Email is required').email('Must be a valid email address'),
+  role: z.enum(['ADMIN', 'EMPLOYEE'], { required_error: 'Role is required' }),
+  department: z.string().optional(),
+  designation: z.string().optional()
+};
+
+const createSchema = z.object({
+  ...baseSchema,
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters long')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+  confirm_password: z.string().min(1, 'Confirm password is required')
+}).refine((data) => data.password === data.confirm_password, {
+  message: "Passwords do not match",
+  path: ["confirm_password"]
+});
+
+const updateSchema = z.object({
+  ...baseSchema,
+});
+
+type EmployeeFormValues = z.infer<typeof createSchema> | z.infer<typeof updateSchema>;
+
+interface EmployeeFormDialogProps {
+  open: boolean;
+  onClose: () => void;
+  employee?: Employee | null;
+  onSuccess?: () => void;
+}
+
+const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, employee, onSuccess }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { actionLoading, actionError, successMessage } = useSelector((state: RootState) => state.employee);
+  const isEdit = !!employee;
+
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<EmployeeFormValues>({
+    resolver: zodResolver(isEdit ? updateSchema : createSchema),
+    defaultValues: {
+      full_name: '',
+      email: '',
+      role: 'EMPLOYEE',
+      department: '',
+      designation: '',
+      password: '',
+      confirm_password: ''
+    }
+  });
+
+  useEffect(() => {
+    if (open) {
+      if (isEdit && employee) {
+        reset({
+          full_name: employee.full_name,
+          email: employee.email,
+          role: employee.role,
+          department: employee.department || '',
+          designation: employee.designation || '',
+        });
+      } else {
+        reset({
+          full_name: '',
+          email: '',
+          role: 'EMPLOYEE',
+          department: '',
+          designation: '',
+          password: '',
+          confirm_password: ''
+        });
+      }
+      dispatch(clearEmployeeMessages());
+    }
+  }, [open, isEdit, employee, reset, dispatch]);
+
+  useEffect(() => {
+    if (successMessage) {
+      if (onSuccess) onSuccess();
+      onClose();
+    }
+  }, [successMessage, onClose, onSuccess]);
+
+  const onSubmit = (data: EmployeeFormValues) => {
+    if (isEdit && employee) {
+      const payload: UpdateEmployeePayload = {
+        full_name: data.full_name,
+        role: data.role as 'ADMIN' | 'EMPLOYEE',
+        department: data.department,
+        designation: data.designation
+      };
+      dispatch(updateEmployee({ id: employee.id, payload }));
+    } else {
+      const createData = data as z.infer<typeof createSchema>;
+      const payload: CreateEmployeePayload = {
+        full_name: createData.full_name,
+        email: createData.email,
+        password: createData.password,
+        confirm_password: createData.confirm_password,
+        role: createData.role as 'ADMIN' | 'EMPLOYEE',
+        department: createData.department,
+        designation: createData.designation
+      };
+      dispatch(createEmployee(payload));
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>{isEdit ? 'Edit Employee' : 'Add New Employee'}</DialogTitle>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogContent dividers>
+          {actionError && (
+            <Box sx={{ mb: 2 }}>
+              <Typography color="error" variant="body2">{actionError}</Typography>
+            </Box>
+          )}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Controller
+                name="full_name"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Full Name"
+                    fullWidth
+                    error={!!errors.full_name}
+                    helperText={errors.full_name?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Email"
+                    fullWidth
+                    type="email"
+                    disabled={isEdit}
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                  />
+                )}
+              />
+            </Grid>
+
+            {!isEdit && (
+              <>
+                <Grid item xs={12} sm={6}>
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Password"
+                        fullWidth
+                        type="password"
+                        error={!!errors.password}
+                        helperText={(errors as any).password?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Controller
+                    name="confirm_password"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Confirm Password"
+                        fullWidth
+                        type="password"
+                        error={!!errors.confirm_password}
+                        helperText={(errors as any).confirm_password?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              </>
+            )}
+
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    select
+                    label="Role"
+                    fullWidth
+                    error={!!errors.role}
+                    helperText={errors.role?.message}
+                  >
+                    <MenuItem value="EMPLOYEE">Employee</MenuItem>
+                    <MenuItem value="ADMIN">Admin</MenuItem>
+                  </TextField>
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="department"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Department"
+                    fullWidth
+                    error={!!errors.department}
+                    helperText={errors.department?.message}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Controller
+                name="designation"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Designation"
+                    fullWidth
+                    error={!!errors.designation}
+                    helperText={errors.designation?.message}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="inherit" disabled={actionLoading}>
+            Cancel
+          </Button>
+          <Button type="submit" variant="contained" disabled={actionLoading} startIcon={actionLoading && <CircularProgress size={20} />}>
+            {isEdit ? 'Save Changes' : 'Add Employee'}
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
+
+export default EmployeeFormDialog;
