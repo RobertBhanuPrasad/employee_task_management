@@ -97,8 +97,8 @@ const TaskList: React.FC = () => {
     status: statusFilter,
     priority: priorityFilter,
     employeeId: employeeFilter ? parseInt(employeeFilter, 10) : undefined,
-    sort: sortField,
-    order: sortOrder as 'asc' | 'desc' | undefined,
+    sortBy: sortField,
+    sortOrder: sortOrder as 'asc' | 'desc' | undefined,
   }), [page, pageSize, searchValue, statusFilter, priorityFilter, employeeFilter, sortField, sortOrder]);
 
   useEffect(() => {

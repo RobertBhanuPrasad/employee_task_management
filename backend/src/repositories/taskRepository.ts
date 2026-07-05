@@ -72,7 +72,7 @@ export class TaskRepository {
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
     
-    const allowedSortColumns = ['title', 'priority', 'status', 'start_date', 'due_date', 'created_at'];
+    const allowedSortColumns = ['id', 'title', 'priority', 'status', 'start_date', 'due_date', 'created_at'];
     const finalSortBy = allowedSortColumns.includes(sortBy) ? `t.${sortBy}` : 't.created_at';
     const finalSortOrder = sortOrder === 'asc' ? 'ASC' : 'DESC';
 

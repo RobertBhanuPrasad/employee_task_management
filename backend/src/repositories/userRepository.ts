@@ -22,7 +22,7 @@ export class UserRepository {
       countParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
-    const allowedSortColumns = ['full_name', 'email', 'department', 'designation', 'role', 'created_at'];
+    const allowedSortColumns = ['id', 'full_name', 'email', 'department', 'designation', 'role', 'created_at'];
     const finalSortBy = allowedSortColumns.includes(sortBy) ? sortBy : 'created_at';
     const finalSortOrder = sortOrder === 'asc' ? 'ASC' : 'DESC';
 
