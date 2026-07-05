@@ -144,7 +144,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
           {isCompleted && isEdit && (
             <Box sx={{ mb: 2 }}>
               <Typography color="warning.main" variant="body2">
-                This task is marked as COMPLETED. Editing might be restricted by the system.
+                This task has been completed and is read-only.
               </Typography>
             </Box>
           )}
@@ -217,6 +217,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     fullWidth
                     error={!!errors.status}
                     helperText={errors.status?.message}
+                    disabled={isCompleted}
                   >
                     <MenuItem value="PENDING">Pending</MenuItem>
                     <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
@@ -296,7 +297,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
           <Button onClick={onClose} color="inherit" disabled={actionLoading}>
             Cancel
           </Button>
-          <Button type="submit" variant="contained" disabled={actionLoading} startIcon={actionLoading && <CircularProgress size={20} />}>
+          <Button type="submit" variant="contained" disabled={actionLoading || isCompleted} startIcon={actionLoading && <CircularProgress size={20} />}>
             {isEdit ? 'Save Changes' : 'Create Task'}
           </Button>
         </DialogActions>

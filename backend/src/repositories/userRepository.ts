@@ -11,12 +11,12 @@ export class UserRepository {
   ): Promise<{ data: RowDataPacket[]; totalRecords: number }> {
     const offset = (page - 1) * limit;
 
-    let searchCondition = '';
+    let whereClause = `WHERE role != 'ADMIN'`;
     const queryParams: any[] = [];
     let countParams: any[] = [];
 
     if (search) {
-      searchCondition = `WHERE full_name LIKE ? OR email LIKE ? OR department LIKE ? OR designation LIKE ?`;
+      whereClause += ` AND (full_name LIKE ? OR email LIKE ? OR department LIKE ? OR designation LIKE ?)`;
       const searchTerm = `%${search}%`;
       queryParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
       countParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
@@ -26,14 +26,14 @@ export class UserRepository {
     const finalSortBy = allowedSortColumns.includes(sortBy) ? sortBy : 'created_at';
     const finalSortOrder = sortOrder === 'asc' ? 'ASC' : 'DESC';
 
-    const countQuery = `SELECT COUNT(*) as total FROM users ${searchCondition}`;
+    const countQuery = `SELECT COUNT(*) as total FROM users ${whereClause}`;
     const [countResult] = await pool.query<RowDataPacket[]>(countQuery, countParams);
     const totalRecords = countResult[0].total;
 
     const dataQuery = `
       SELECT id, full_name, email, role, department, designation, created_at, updated_at 
       FROM users 
-      ${searchCondition} 
+      ${whereClause} 
       ORDER BY ${finalSortBy} ${finalSortOrder} 
       LIMIT ? OFFSET ?
     `;

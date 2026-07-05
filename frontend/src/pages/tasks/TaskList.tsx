@@ -230,10 +230,17 @@ const TaskList: React.FC = () => {
           </Tooltip>
           {isAdmin && (
             <>
-              <Tooltip title="Edit">
-                <IconButton size="small" onClick={() => handleOpenForm(params.row as Task)} color="primary">
-                  <EditIcon fontSize="small" />
-                </IconButton>
+              <Tooltip title={params.row.status === 'COMPLETED' ? "Completed tasks cannot be edited." : "Edit"}>
+                <span>
+                  <IconButton 
+                    size="small" 
+                    onClick={() => handleOpenForm(params.row as Task)} 
+                    color="primary"
+                    disabled={params.row.status === 'COMPLETED'}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </span>
               </Tooltip>
               <Tooltip title="Delete">
                 <IconButton size="small" onClick={() => handleOpenDelete(params.row as Task)} color="error">
