@@ -10,7 +10,8 @@ import {
   Grid,
   Box,
   Typography,
-  CircularProgress
+  CircularProgress,
+  Tooltip
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -58,7 +59,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
   // Disable editing if backend enforces completed tasks cannot be edited
   const isCompleted = task?.status === 'COMPLETED';
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<TaskFormValues>({
+  const { control, handleSubmit, reset, watch, formState: { errors } } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
       title: '',
@@ -70,6 +71,9 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
       assigned_employee_id: 0
     }
   });
+
+  const statusValue = watch('status');
+  const isCreateAndCompleted = !isEdit && statusValue === 'COMPLETED';
 
   useEffect(() => {
     if (open) {
@@ -148,43 +152,41 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
               </Typography>
             </Box>
           )}
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Task Title"
-                    fullWidth
-                    error={!!errors.title}
-                    helperText={errors.title?.message}
-                    disabled={isCompleted}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Description"
-                    fullWidth
-                    multiline
-                    rows={3}
-                    error={!!errors.description}
-                    helperText={errors.description?.message}
-                    disabled={isCompleted}
-                  />
-                )}
-              />
-            </Grid>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Task Title"
+                  fullWidth
+                  error={!!errors.title}
+                  helperText={errors.title?.message}
+                  disabled={isCompleted}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Description"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                  disabled={isCompleted}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+              )}
+            />
             
-            <Grid item xs={12} sm={6}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
               <Controller
                 name="priority"
                 control={control}
@@ -197,6 +199,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     error={!!errors.priority}
                     helperText={errors.priority?.message}
                     disabled={isCompleted}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   >
                     <MenuItem value="LOW">Low</MenuItem>
                     <MenuItem value="MEDIUM">Medium</MenuItem>
@@ -204,8 +207,6 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                   </TextField>
                 )}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
               <Controller
                 name="status"
                 control={control}
@@ -218,6 +219,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     error={!!errors.status}
                     helperText={errors.status?.message}
                     disabled={isCompleted}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   >
                     <MenuItem value="PENDING">Pending</MenuItem>
                     <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
@@ -225,9 +227,6 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                   </TextField>
                 )}
               />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
               <Controller
                 name="start_date"
                 control={control}
@@ -241,11 +240,13 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     error={!!errors.start_date}
                     helperText={errors.start_date?.message}
                     disabled={isCompleted}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
               <Controller
                 name="due_date"
                 control={control}
@@ -259,12 +260,10 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     error={!!errors.due_date}
                     helperText={errors.due_date?.message}
                     disabled={isCompleted}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
-            </Grid>
-
-            <Grid item xs={12}>
               <Controller
                 name="assigned_employee_id"
                 control={control}
@@ -277,6 +276,7 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                     error={!!errors.assigned_employee_id}
                     helperText={errors.assigned_employee_id?.message}
                     disabled={isCompleted || employeesLoading}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   >
                     <MenuItem value={0} disabled>
                       {employeesLoading ? 'Loading employees...' : 'Select Employee'}
@@ -289,17 +289,20 @@ const TaskFormDialog: React.FC<TaskFormDialogProps> = ({ open, onClose, task, on
                   </TextField>
                 )}
               />
-            </Grid>
-
-          </Grid>
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="inherit" disabled={actionLoading}>
             Cancel
           </Button>
-          <Button type="submit" variant="contained" disabled={actionLoading || isCompleted} startIcon={actionLoading && <CircularProgress size={20} />}>
-            {isEdit ? 'Save Changes' : 'Create Task'}
-          </Button>
+          <Tooltip title={isCreateAndCompleted ? "Completed task can't be created" : ""} placement="top">
+            <span>
+              <Button type="submit" variant="contained" disabled={actionLoading || isCompleted || isCreateAndCompleted} startIcon={actionLoading && <CircularProgress size={20} />}>
+                {isEdit ? 'Save Changes' : 'Create Task'}
+              </Button>
+            </span>
+          </Tooltip>
         </DialogActions>
       </form>
     </Dialog>

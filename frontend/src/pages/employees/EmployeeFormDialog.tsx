@@ -10,7 +10,8 @@ import {
   Grid,
   Box,
   Typography,
-  CircularProgress
+  CircularProgress,
+  Tooltip
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -137,8 +138,8 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, 
               <Typography color="error" variant="body2">{actionError}</Typography>
             </Box>
           )}
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
               <Controller
                 name="full_name"
                 control={control}
@@ -149,66 +150,80 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, 
                     fullWidth
                     error={!!errors.full_name}
                     helperText={errors.full_name?.message}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={12}>
               <Controller
                 name="email"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Email"
-                    fullWidth
-                    type="email"
-                    disabled={isEdit}
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                  />
+                  isEdit ? (
+                    <Tooltip title="You can't edit or change the email" arrow placement="top">
+                      <span style={{ display: 'flex', flex: 1 }}>
+                        <TextField
+                          {...field}
+                          label="Email"
+                          fullWidth
+                          type="email"
+                          disabled={true}
+                          error={!!errors.email}
+                          helperText={errors.email?.message}
+                          sx={{ width: '100%', '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                        />
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    <TextField
+                      {...field}
+                      label="Email"
+                      fullWidth
+                      type="email"
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    />
+                  )
                 )}
               />
-            </Grid>
+            </Box>
 
             {!isEdit && (
-              <>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    name="password"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Password"
-                        fullWidth
-                        type="password"
-                        error={!!errors.password}
-                        helperText={(errors as any).password?.message}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    name="confirm_password"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Confirm Password"
-                        fullWidth
-                        type="password"
-                        error={!!errors.confirm_password}
-                        helperText={(errors as any).confirm_password?.message}
-                      />
-                    )}
-                  />
-                </Grid>
-              </>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Password"
+                      fullWidth
+                      type="password"
+                      error={!!errors.password}
+                      helperText={(errors as any).password?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    />
+                  )}
+                />
+                <Controller
+                  name="confirm_password"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Confirm Password"
+                      fullWidth
+                      type="password"
+                      error={!!errors.confirm_password}
+                      helperText={(errors as any).confirm_password?.message}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    />
+                  )}
+                />
+              </Box>
             )}
 
-            <Grid item xs={12} sm={6}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2.5 }}>
               <Controller
                 name="role"
                 control={control}
@@ -220,15 +235,12 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, 
                     fullWidth
                     error={!!errors.role}
                     helperText={errors.role?.message}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   >
                     <MenuItem value="EMPLOYEE">Employee</MenuItem>
-                    <MenuItem value="ADMIN">Admin</MenuItem>
                   </TextField>
                 )}
               />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
               <Controller
                 name="department"
                 control={control}
@@ -239,12 +251,10 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, 
                     fullWidth
                     error={!!errors.department}
                     helperText={errors.department?.message}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
-            </Grid>
-
-            <Grid item xs={12}>
               <Controller
                 name="designation"
                 control={control}
@@ -255,11 +265,12 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({ open, onClose, 
                     fullWidth
                     error={!!errors.designation}
                     helperText={errors.designation?.message}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="inherit" disabled={actionLoading}>
